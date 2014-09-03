@@ -16,6 +16,12 @@ string ltrim( string str ){
 bool isWhiteSpace( string str ){ // Wir löschen alle Leerzeichen im String. Wenn
   return rtrim(str).empty();     // er dann leer ist, bestand er nur aus Leerzeichen.
 }
+bool isOneOf( string chars, char c ){
+  for(size_t i = 0; i < chars.size(); i++){
+    if( chars[i] == c ) return true;
+  }
+  return false;
+}
 
 /**
  * Splitet `str` an `ws` auf und gibt Partikel/Wörter als Liste zurück
