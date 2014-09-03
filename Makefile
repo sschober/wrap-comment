@@ -8,6 +8,7 @@ ALL:	$(TARGETS)
 
 wrap-comment: wrap-comment.cc
 align-on: align-on.cc
+pad-parent: pad-paren.cc
 
 clean:
 	rm -f $(TARGETS)
