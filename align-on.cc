@@ -29,22 +29,22 @@ int main(int argc, char *argv[]){
   size_t maxCodeLine = 0;
 
   string line;
-  while(getline(cin, line)){                              // Wir lesen STDIN Zeile
-    tuple<string,string,bool> lineEntry;
-    size_t commentCharIdx = line.find(delimString);     // für Zeile ein und splitten
-    if( string::npos == commentCharIdx ){
-      lines.push_back( make_tuple(
-            line, "", false));
-      continue;
+  while( getline( cin, line )){                             // Wir lesen STDIN Zeile
+    tuple<string, string, bool> lineEntry;                  // für Zeile ein und
+    size_t commentCharIdx = line.find( delimString );       // splitten jede in einen
+    if( string::npos == commentCharIdx ){                   // Code-Teil und einen
+      lines.push_back( make_tuple(                          // Kommentarteil auf.
+            line, "", false ));                             // Die Code-Zeilen fügen
+      continue;                                             // wir zu _einer_
     }
-    string left = rtrim(line.substr(0, commentCharIdx )); // jede in einen Code-Teil
-    string right = ltrim(line.substr(
+    string left = rtrim( line.substr( 0, commentCharIdx ));
+    string right = ltrim( line.substr(
           commentCharIdx+delimString.size(),
           string::npos
           ));
-    if(left.size() > maxCodeLine){                        // und einen Kommentarteil
-      maxCodeLine = left.size();                          // auf. Die Code-Zeilen
-    }                                                     // fügen wir zu _einer_
+    if( left.size() > maxCodeLine ){
+      maxCodeLine = left.size();
+    }
     lines.push_back( make_tuple(
           left, right, true ));
   }
