@@ -9,14 +9,18 @@ using namespace std;
 int main(int argc, char *argv[]){
   string commentString = "#";
   int wrapColumn       = 80;
+  bool unwrap          = false;
   int opt;
-  while( (opt = getopt(argc, argv, "d:w:")) != -1 ){
+  while( (opt = getopt(argc, argv, "d:w:u")) != -1 ){
     switch(opt){
       case 'd':
         commentString = string( optarg );
         break;
       case 'w':
         wrapColumn = atoi( optarg );
+        break;
+      case 'u':
+        unwrap = true;
         break;
       default:
         cerr << "Usage: " << argv[0]
@@ -56,22 +60,31 @@ int main(int argc, char *argv[]){
   list<string> commentWords = split( comment ); // Wir splitten die Kommentarzeile
                                                 // in Wörter auf
 
-  do {                                               // Konzeptionell laufen wir
-    string newLine;                                  // hier über die vorher gesammelten
-    if( ! codeLines.empty() ){                       // Code-Zeilen und fügen so
-      newLine += codeLines.front();                  // lange Kommentarwörter zur
-      codeLines.pop_front();                         // aktuellen Zeile hinzu, bis
-    }                                                // die maximale Zeilenlänge
-    if( ! commentWords.empty() ) {                   // erreicht ist. Falls nach
-      size_t padding = maxCodeLine - newLine.size(); // Abarbeiten aller Code-Zeilen
-      newLine.append(padding, ' ');                  // noch Kommentarwörter übrig
-      newLine.append(commentString);                 // sind werden diese in der
-      do {                                           // selben Einrückung weiter
-        newLine.append(1, FILL_CHAR);                // in leeren Zeilen fortgesetzt.
-        newLine.append( commentWords.front() );
-        commentWords.pop_front();
-        if(commentWords.empty()) break;
-      } while(newLine.size() < wrapColumn );
+  do {                                                 // Konzeptionell laufen wir
+    string newLine;                                    // hier über die vorher gesammelten
+    if( ! codeLines.empty() ){                         // Code-Zeilen und fügen
+      newLine += codeLines.front();                    // so lange Kommentarwörter
+      codeLines.pop_front();                           // zur aktuellen Zeile hinzu,
+    }                                                  // bis die maximale Zeilenlänge
+    if( ! commentWords.empty() ) {                     // erreicht ist. Falls nach
+      if( unwrap ){                                    // Abarbeiten aller Code-Zeilen
+        commentWords.clear();                          // noch Kommentarwörter übrig
+        newLine.append(1, FILL_CHAR);                  // sind werden diese in der
+        newLine.append(commentString);                 // selben Einrückung weiter
+        newLine.append(1, FILL_CHAR);                  // in leeren Zeilen fortgesetzt.
+        newLine.append( comment );
+      }
+      else {
+        size_t padding = maxCodeLine - newLine.size();
+        newLine.append(padding, ' ');
+        newLine.append(commentString);
+        do {
+          newLine.append(1, FILL_CHAR);
+          newLine.append( commentWords.front() );
+          commentWords.pop_front();
+          if(commentWords.empty()) break;
+        } while(newLine.size() < wrapColumn );
+      }
     }
     cout << newLine << endl;
   } while(
